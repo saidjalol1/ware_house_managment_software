@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'warehouse.apps.WarehouseConfig',
     'sale.apps.SaleConfig',
+    'expance.apps.ExpanceConfig',
+    'worker.apps.WorkerConfig',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -109,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 

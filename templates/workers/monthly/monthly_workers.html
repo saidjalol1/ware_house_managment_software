@@ -1,0 +1,218 @@
+{% extends 'wrapper.html' %}
+{% block content %}
+<style>
+    tr:hover{
+        background-color: rgb(189, 184, 184);
+    }
+</style>
+<div class="pagetitle mb-5">
+    <h1>Oylik oladiganlar</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'main:main_app' %}">Asosiyga -></a></li>
+      </ol>
+    </nav>
+</div>
+<div class="row mb-4">
+    <div class="col">
+        <div class="d-flex mt-4">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Add">Qo'shish</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card" style="overflow-x: scroll;">
+            <div class="card-body">
+                <h5 class="card-title">Oylik  ishchilar</h5>
+                <!-- Table with stripped rows -->
+                <table class="table table-striped" style="overflow-x: scroll;" >
+                    <thead>
+                        <tr>
+                            <th scope="col">#id</th>
+                            <th scope="col">Ismi</th>
+                            <th scope="col">Familiaysi</th>
+                            <th scope="col">Oyligi</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in objects %}
+                        <tr>
+                            <th scope="row">{{ i.id }}</th>
+                            <td><a href="{% url 'worker_app:worker_detail_month' i.id %}">{{ i.name }}</a></td>
+                            <td><a href="{% url 'worker_app:worker_detail_month' i.id %}">{{ i.surname }}</a></td>
+                            <td><a href="{% url 'worker_app:worker_detail_month' i.id %}">{{ i.salary }}</a></td>
+                            <td>
+                                <button class="btn btn-success edit-btn" data-id="{{ i.id }}" data-bs-toggle="modal" data-bs-target="#EditModal"><i class="bi bi-pen"></i></button>
+                                <button class="btn btn-danger" data-bs-target="#DeleteProduct-{{ i.id }}" data-bs-toggle="modal"><i class="bi bi-trash"></i></button>
+                            </td>
+                            <div class="modal fade" id="DeleteProduct-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                              <!-- Vertical Form -->
+                                              <form class="row g-3" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="object" value="{{ i.id }}">
+                                                    <div class="col-12 py-5" style="text-align: center;font-size:20px;color:grey;" >
+                                                        Haqiqattan O'chirishni Hoxlaysizmi ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yo'q</button>
+                                                        <button type="submit" class="btn btn-danger" name="delete">Ha</button>
+                                                    </div>
+                                              </form><!-- Vertical Form -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </tr>
+                        <!-- Delete Modal -->
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- ADD Modal -->
+<div class="modal fade" id="Add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Ishchi qoshing</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="card">
+                <div class="card-body">
+                  <!-- Vertical Form -->
+                  <form class="row g-3" method="POST">
+                    {% csrf_token %}
+                        <div class="col-12">
+                            <label class="form-label">Ismi:</label>
+                            <input type="text" class="form-control" name="name" required >
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Familiyasi:</label>
+                            <input type="text" class="form-control" name="surname" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Turi:</label>
+                            <select name="type" class="form-select"  required>
+                                <option value="oylik">Oylik</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Oyligi:</label>
+                            <input type="float" class="form-control" name="salary"  required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                            <button type="submit" class="btn btn-primary" name="add">Saqlash</button>
+                        </div>
+                  </form><!-- Vertical Form -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Edit Modal -->
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Ishchini tahrirlang</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="card">
+                <div class="card-body">
+                  <!-- Vertical Form -->
+                  <form class="row g-3" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="worker_id" name="worker">
+                        <div class="col-12">
+                            <label class="form-label">Ismi:</label>
+                            <input type="text" class="form-control" name="name" id="name" required >
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Familiyasi:</label>
+                            <input type="text" class="form-control" name="surname" id="surname" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Turi:</label>
+                            <select name="type" class="form-select" id="type" required>
+                                <option value="oylik">Oylik</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Oyligi:</label>
+                            <input type="float" class="form-control" name="salary" id="salary" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                            <button type="submit" class="btn btn-primary" name="edit">Saqlash</button>
+                        </div>
+                  </form><!-- Vertical Form -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+      $(".edit-btn").click(function() {
+  
+          var worker_id = $(this).data("id");
+          var csrfToken = "{{ csrf_token }}";
+          
+          $.ajax({
+              url: '/worker/monthly/', 
+              type: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken 
+              },
+              data: {
+                  'action_edit': 'action_edit',
+                  'worker': worker_id
+              },
+              success: function(response) {
+                console.log(response.worker)
+                 
+                  if (response.success) {
+                     
+                      $('#worker_id').val(response.worker.id);
+                      $('#name').val(response.worker.name);
+                      $('#surname').val(response.worker.surname);
+                      $('#salary').val(response.worker.salary);
+                      $('#EditModal').modal('show');
+                     
+                  } else {
+                     console.log(worker_id)
+                     console.log(response.worker)
+                      alert('Error: ' + response.message);
+                  }
+              },
+              error: function(xhr, status, error) {
+                 
+                  console.log("ishlamadi")
+              }
+          });
+      });
+  });
+</script>
+{% endblock content %}

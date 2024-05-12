@@ -133,17 +133,17 @@
         </a>
         <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="tables-general.html">
+            <a href="{% url 'worker_app:worker_hour' %}">
               <i class="bi bi-circle"></i><span>Soat bay ishlaydiganlar</span>
             </a>
           </li>
           <li>
-            <a href="tables-data.html">
+            <a href="{% url 'worker_app:worker_month' %}">
               <i class="bi bi-circle"></i><span>Oylik ishlaydiganlar</span>
             </a>
           </li>
           <li>
-            <a href="tables-data.html">
+            <a href="{% url 'worker_app:worker_view' %}">
               <i class="bi bi-circle"></i><span>Qilgan ishiga pul oladiganlar</span>
             </a>
           </li>
@@ -155,7 +155,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link" href="{% url 'expance_app:expance_view' %}">
             <i class="bi bi-cash"></i><span>Chiqimlar</span>
         </a>
       </li><!-- End Charts Nav -->
