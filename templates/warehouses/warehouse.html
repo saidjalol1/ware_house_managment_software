@@ -1,0 +1,282 @@
+{% extends 'wrapper.html' %}
+{% block content %}
+<div class="pagetitle mb-5">
+    <h1>Mahsulotlar</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'main:main_app' %}">Asosiy</a></li>
+      </ol>
+    </nav>
+  </div>
+<div class="row mb-4">
+    <div class="col">
+        <div class="d-flex">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#AddCategory">Mahsulot turini qo'shing</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Add">Qo'shish</button>
+                <button class="btn btn-warning" type="submit" name="pdf">.pdf</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card" style="overflow-x: scroll;">
+            <div class="card-body">
+                <h5 class="card-title">Tayyor mahsulotlar</h5>
+                <!-- Table with stripped rows -->
+                <table class="table table-striped" style="overflow-x: scroll;" >
+                    <thead>
+                        <tr>
+                            <th scope="col">#id</th>
+                            <th scope="col">Turi</th>
+                            <th scope="col">Qalinligi</th>
+                            <th scope="col">Kraskasi</th>
+                            <th scope="col">Narxi</th>
+                            <th scope="col">Valyuta</th>
+                            <th scope="col">Soni</th>
+                            <th scope="col">Jami Summasi</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in objects %}
+                        <tr>
+                            <th scope="row">{{ i.id }}</th>
+                            <td>{{ i.category.name }}</td>
+                            <td>{{ i.size }}</td>
+                            <td>{{ i.paint }}</td>
+                            <td>{{ i.price }}</td>
+                            <td>{{ i.currency }}</td>
+                            <td>{{ i.count }} ta </td>
+                            <td>{{ i.get_overall_price }}  {{ i.currency }}</td>
+                            <td>
+                                <button class="btn btn-success edit-btn" data-id="{{ i.id }}" data-bs-toggle="modal" data-bs-target="#EditModal"><i class="bi bi-pen"></i></button>
+                                <button class="btn btn-danger" data-bs-target="#DeleteProduct-{{ i.id }}" data-bs-toggle="modal"><i class="bi bi-trash"></i></button>
+                            </td>
+                            <div class="modal fade" id="DeleteProduct-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                              <!-- Vertical Form -->
+                                              <form class="row g-3" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="object" value="{{ i.id }}">
+                                                    <div class="col-12 py-5" style="text-align: center;font-size:20px;color:grey;" >
+                                                        Haqiqattan O'chirishni Hoxlaysizmi ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yo'q</button>
+                                                        <button type="submit" class="btn btn-danger" name="delete_product">Ha</button>
+                                                    </div>
+                                              </form><!-- Vertical Form -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </tr>
+                        <!-- Delete Modal -->
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- ADD Modal -->
+<div class="modal fade" id="Add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Mahsult Qo'shing</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="card">
+                <div class="card-body">
+                  <!-- Vertical Form -->
+                  <form class="row g-3" method="POST">
+                    {% csrf_token %}
+                        <div class="col-12">
+                            <label for="inputNanme4" class="form-label">Turi:</label>
+                            <select name="category" class="form-select" required>
+                                {% for i in category %}
+                                    <option value="{{ i.id }}">{{ i.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Narxi:</label>
+                            <input type="float" class="form-control" name="price" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Valyutasi:</label>
+                            <select name="currency" class="form-select" required>
+                                <option value="dollor">Dollor</option>
+                                <option value="som">So'm</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="inputPassword4" class="form-label">Qalinligi:</label>
+                            <input type="text" class="form-control" name="size" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="inputPassword4" class="form-label">Soni:</label>
+                            <input type="number"  class="form-control" name="number" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="inputAddress" class="form-label">Kraskasi:</label>
+                            <input type="text" class="form-control" name="paint" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="inputAddress" class="form-label">Qo'shimcha:</label>
+                            <input type="text" class="form-control" name="extra">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                            <button type="submit" class="btn btn-primary" name="add">Saqlash</button>
+                        </div>
+                  </form><!-- Vertical Form -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Category Add Modal -->
+<div class="modal fade" id="AddCategory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Mahsulto Turini kiriting</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="card">
+                <div class="card-body">
+                  <!-- Vertical Form -->
+                  <form class="row g-3" method="POST">
+                    {% csrf_token %}
+                        <div class="col-12">
+                            <label class="form-label">Nomi:</label>
+                            <input type="float" class="form-control" name="name" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                            <button type="submit" class="btn btn-primary" name="addCategory">Saqlash</button>
+                        </div>
+                  </form><!-- Vertical Form -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Edit Modal -->
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Mahsulotni Tahrirlash</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="card">
+                <div class="card-body">
+                  <!-- Vertical Form -->
+                  <form class="row g-3" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" id="product_id" value="product_id" >
+                        <div class="col-12">
+                            <label class="form-label">Narxi:</label>
+                            <input type="number" class="form-control" name="price" id="price" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Valyutasi:</label>
+                            <select name="currency" class="form-select" id="currency" required>
+                                <option value="so'm">So'm</option>
+                                <option value="dollor">Dollor</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Qalinligi:</label>
+                            <input type="number" class="form-control" name="size" id="size" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Soni:</label>
+                            <input type="number" class="form-control" name="count" id="count" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Kraskasi:</label>
+                            <input type="text" class="form-control" name="paint" id="paint" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Qo'shimcha:</label>
+                            <input type="text" class="form-control" name="extra" id="extra">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                            <button type="submit" class="btn btn-primary" name="edit">Saqlash</button>
+                        </div>
+                  </form><!-- Vertical Form -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+      $(".edit-btn").click(function() {
+  
+          var productId = $(this).data("id");
+          var csrfToken = "{{ csrf_token }}";
+          
+          $.ajax({
+              url: '/warehouse/', 
+              type: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken 
+              },
+              data: {
+                  'action_edit': 'edit',
+                  'product': productId
+              },
+              success: function(response) {
+                console.log(response.product)
+                 
+                  if (response.success) {
+                     
+                      $('#product_id').val(response.product.id);
+                      $('#price').val(response.product.price);
+                      $('#currency').val(response.product.currency);
+                      $('#size').val(response.product.size);
+                      $('#count').val(response.product.count);
+                      $('#paint').val(response.product.paint);
+                      $('#extra').val(response.product.extra);
+                     
+                      $('#EditModal').modal('show');
+                     
+                  } else {
+                     console.log(productId)
+                     console.log(response.product)
+                      alert('Error: ' + response.message);
+                  }
+              },
+              error: function(xhr, status, error) {
+                 
+                  console.log("ishlamadi")
+              }
+          });
+      });
+  });
+  </script>
+{% endblock content %}

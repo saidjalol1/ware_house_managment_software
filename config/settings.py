@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'main.apps.MainConfig',
+    'warehouse.apps.WarehouseConfig',
+    'sale.apps.SaleConfig',
     
     'django.contrib.admin',
     'django.contrib.auth',
